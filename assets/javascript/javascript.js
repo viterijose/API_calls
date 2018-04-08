@@ -52,77 +52,76 @@ $(document).ready(function () {
 
     function displayMovieInfo() {
 
-        // var movie = $(this).attr("data-name");
-
         for (var i = 0; i < movies.length; i++) {
 
             var movie = movies[i];
             var queryURL = "https://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
-            var queryURL1 = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=surfing&key=AIzaSyC8th4wDxjLmTn1fONnkSMaUaGAGTUNQRA"
-
-            // $.ajax({
-            //     url: queryURL,
-            //     method: "GET"
-            // }).then(function (response) {
-
-            //     var movieDiv = $("<div class='movie'>");
-
-            //     var a = $("<h1>");
-
-            //     a.addClass("movie-btn");
-            //     a.attr("data-name", movies[i]);
-            //     a.text(response.Title);
-
-            //     movieDiv.append(a)
-
-            //     var rating = response.Rated;
-            //     var pOne = $("<p>").text("Rating: " + rating);
-
-            //     movieDiv.append(pOne);
-
-            //     var released = response.Released;
-            //     var pTwo = $("<p>").text("Released: " + released);
-
-            //     movieDiv.append(pTwo);
-
-            //     var plot = response.Plot;
-            //     var pThree = $("<p>").text("Plot: " + plot);
-
-            //     movieDiv.append(pThree);
-
-            //     var imgURL = response.Poster;
-            //     var image = $("<img>").attr("src", imgURL);
-
-            //     movieDiv.append(image);
-
-            //     $(".container").prepend(movieDiv);
-            // });
+            // var queryURL1 = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=2&q=CaptainAmericatrailer&key=AIzaSyC8th4wDxjLmTn1fONnkSMaUaGAGTUNQRA"
 
             $.ajax({
-                url: queryURL1,
+                url: queryURL,
                 method: "GET"
             }).then(function (response) {
-                console.log(response);
-            });
 
+
+                var movieDiv = $("<div class='movie'>");
+                var a = $("<button id = 'movie_id'>");
+
+                a.addClass("movie-btn");
+                a.attr("data-name", response.imdbID);
+                a.text(response.Title);
+                movieDiv.append(a)
+
+                var released = response.Released;
+                var pTwo = $("<p>").text("Released: " + released);
+
+                movieDiv.append(pTwo);
+
+                var plot = response.Plot;
+                var pThree = $("<p>").text("Plot: " + plot);
+
+                movieDiv.append(pThree);
+
+                // ------------------For Youtube --------------------------//
+
+                var play = $(' <div class="youtube-player" data-id="VIDEO_ID"></div>');
+                movieDiv.append(play);
+
+                // ------------------For Youtube --------------------------//
+
+                $(".container").prepend(movieDiv);
+
+            });
+            localStorage.setItem("movie" + i, movies[i]);
+            localStorage.setItem("movies", JSON.stringify(movies));
         }
     }
-    displayMovieInfo();
-    // Load the IFrame Player API code asynchronously.
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/player_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // Replace the 'ytplayer' element with an <iframe> and
-    // YouTube player after the API code downloads.
-    var player;
-    function onYouTubePlayerAPIReady() {
-        player = new YT.Player('ytplayer', {
-            height: '360',
-            width: '640',
-            videoId: 'vk0F8dHo3wU'
+
+    displayMovieInfo();
+
+    $("#movie_id").on("click", function () {
+        alert("click");
+        character_array();
+    })
+    
+    function character_array() {
+
+        var movie_ID = $(this).val();
+        // console.log(movie_ID);
+        var queryURL2 = "https://api.themoviedb.org/3/movie/"+ movie_ID +"/credits?api_key=cf7b01cd6ffa681f8ced55fe3eac526f";
+        var char_array = [];
+        $.ajax({
+            url: queryURL2,
+            method: "GET"
+        }).then(function (response_char) {
+            // console.log(response_char);
+            // console.log(response_char.cast);
+            for (i = 0 ; i < 10 ; i++){
+                char_array.push(response_char.cast[i]);
+            }
+            console.log(char_array);
+
         });
     }
-
 })
